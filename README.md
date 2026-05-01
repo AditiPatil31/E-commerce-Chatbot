@@ -66,11 +66,11 @@ ChromaDB          Preprocessing + Hints
 
 ### 💬 Chat Interface
 
-![Chat UI](assets/screenshot1.png)
+![Chat UI](assets/screenshot_1.png)
 
 ### 🛒 Product Results
 
-![Product Results](assets/screenshot2.png)
+![Product Results](assets/screenshot_2.png)
 
 ---
 
