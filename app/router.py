@@ -97,7 +97,14 @@ def keyword_scores(query: str):
     product_keywords = [
         "buy", "show", "find", "search", "price", "under",
         "top", "best", "cheap", "products", "items",
-        "recommend", "popular", "available", "stock"
+        "recommend", "popular", "available", "stock",
+        "premium", "affordable", "budget", "expensive", "discounted",
+        "rated", "deals", "sale", "offers", "cheapest", "highly",
+        "laptop", "laptops", "phone", "phones", "mobile", "tv", "television",
+        "headphone", "headphones", "earphone", "earphones", "earbud", "earbuds",
+        "smartwatch", "smartwatches", "watch", "watches", "shoe", "shoes",
+        "speaker", "speakers", "camera", "cameras", "tablet", "tablets",
+        "fridge", "ac", "washing", "dryer", "trimmer", "perfume", "book", "books"
     ]
 
     faq_keywords = [
