@@ -15,7 +15,7 @@
 ### 🔗 Connect & Explore
 
 [![GitHub](https://img.shields.io/badge/GitHub-AditiPatil31-181717?style=for-the-badge\&logo=github)](https://github.com/AditiPatil31)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Aditi_Patil-0A66C2?style=for-the-badge\&logo=linkedin)](www.linkedin.com/in/aditi-patil31)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Aditi_Patil-0A66C2?style=for-the-badge\&logo=linkedin)](www.linkedin.com/in/aditi-patil31/)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Click_Here-F97316?style=for-the-badge)](https://YOUR_PROJECT_LINK)
 
 <br/>
@@ -139,7 +139,7 @@ what is the return policy?
 
 **Aditi Patil**
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge\&logo=linkedin\&logoColor=white)](https://www.linkedin.com/in/aditi-patil31/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Connect-0A66C2?style=for-the-badge\&logo=linkedin\&logoColor=white)](www.linkedin.com/in/aditi-patil31/)
 [![GitHub](https://img.shields.io/badge/GitHub-Follow-181717?style=for-the-badge\&logo=github\&logoColor=white)](https://github.com/AditiPatil31)
 
 <br/>
