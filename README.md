@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=600&lines=🛍️+E-Commerce+AI+Chatbot;Natural+Language+→+SQL+→+Results;6,795+Products+%7C+90%2B+Categories" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=600&lines=E-Commerce+AI+Chatbot;Natural+Language+to+SQL+to+Results;6795+Products+and+90+Categories" />
 
 <br/>
 
@@ -13,15 +13,16 @@
 ![ChromaDB](https://img.shields.io/badge/ChromaDB-RAG-8B5CF6?style=for-the-badge)
 
 <br/>
+
 ### 🔗 Connect & Explore
 
-[![GitHub](https://img.shields.io/badge/GitHub-AditiPatil31-181717?style=for-the-badge\&logo=github)](https://github.com/AditiPatil31)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Aditi_Patil-0A66C2?style=for-the-badge\&logo=linkedin)](https://www.linkedin.com/in/aditi-patil31/)
+[![GitHub](https://img.shields.io/badge/GitHub-AditiPatil31-181717?style=for-the-badge&logo=github)](https://github.com/AditiPatil31)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Aditi_Patil-0A66C2?style=for-the-badge&logo=linkedin)](https://www.linkedin.com/in/aditi-patil31/)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Click_Here-F97316?style=for-the-badge)](https://YOUR_PROJECT_LINK)
 
 <br/>
 
-> **Ask anything. Get real products. Instantly.**
+> **Ask anything. Get real products. Instantly.**  
 > *Hybrid LLM + SQL + RAG powered shopping assistant*
 
 </div>
