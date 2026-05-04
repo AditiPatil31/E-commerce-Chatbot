@@ -3,14 +3,9 @@ from faq import ingest_faq_data, faq_chain
 from pathlib import Path
 from router import detect_route
 from sql import sql_chain
-# -----------------------------
-# Setup
-# -----------------------------
-faqs_path = Path(__file__).parent / "resources/faq_data.csv"
-ingest_faq_data(faqs_path)
 
 # -----------------------------
-# Page Config
+# Page Config (must be first Streamlit call)
 # -----------------------------
 st.set_page_config(
     page_title="E-commerce Bot",
@@ -19,7 +14,19 @@ st.set_page_config(
 )
 
 # -----------------------------
-# Custom Styling (simple & clean)
+# Setup (IMPORTANT FIX)
+# Run ingestion only once using cache
+# -----------------------------
+faqs_path = Path(__file__).parent / "resources/faq_data.csv"
+
+@st.cache_resource
+def load_faq():
+    ingest_faq_data(faqs_path)
+
+load_faq()
+
+# -----------------------------
+# Custom Styling
 # -----------------------------
 st.markdown("""
 <style>
@@ -41,6 +48,7 @@ h1 {
 # Title + Tagline
 # -----------------------------
 st.title("🛍️ E-commerce Assistant")
+
 st.markdown("""
 <div style='text-align: center; 
             font-size: 20px; 
@@ -51,8 +59,9 @@ st.markdown("""
     ✨ Your shopping assistant, ready when you are.
 </div>
 """, unsafe_allow_html=True)
+
 # -----------------------------
-# Sidebar (Clear Chat)
+# Sidebar
 # -----------------------------
 with st.sidebar:
     st.header("⚙️ Controls")
@@ -65,17 +74,22 @@ with st.sidebar:
 # -----------------------------
 def ask(query):
     route = detect_route(query)
-
     print("Detected Route:", route)
 
-    if route == "faq":
-        return faq_chain(query)
+    try:
+        if route == "faq":
+            return faq_chain(query)
 
-    elif route == "sql":
-        return sql_chain(query)
+        elif route == "sql":
+            return sql_chain(query)
 
-    else:
-        return faq_chain(query)
+        else:
+            return faq_chain(query)
+
+    except Exception as e:
+        print("ERROR:", e)
+        return "Something went wrong. Please try again."
+
 # -----------------------------
 # Chat History
 # -----------------------------
