@@ -15,7 +15,7 @@
 ### 🔗 Connect & Explore
 
 [![GitHub](https://img.shields.io/badge/GitHub-AditiPatil31-181717?style=for-the-badge\&logo=github)](https://github.com/AditiPatil31)
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-Aditi_Patil-0A66C2?style=for-the-badge\&logo=linkedin)](https://www.linkedin.com/in/aditi-patil31/)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-Aditi_Patil-0A66C2?style=for-the-badge\&logo=linkedin)](www.linkedin.com/in/aditi-patil31)
 [![Live Demo](https://img.shields.io/badge/Live_Demo-Click_Here-F97316?style=for-the-badge)](https://YOUR_PROJECT_LINK)
 
 <br/>
@@ -68,11 +68,11 @@ ChromaDB          Query Preprocessing
 
 ### 💬 Chat Interface
 
-![Chat UI](assets/screenshot1.png)
+![Chat UI](assets/screenshot_1.png)
 
 ### 🛒 Product Results
 
-![Product Results](assets/screenshot2.png)
+![Product Results](assets/screenshot_2.png)
 
 ---
 
