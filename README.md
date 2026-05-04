@@ -1,8 +1,12 @@
+# 🛍️ E-Commerce AI Chatbot
+
 <div align="center">
 
 <img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=600&lines=🛍️+E-Commerce+AI+Chatbot;Natural+Language+→+SQL+→+Results;6,795+Products+%7C+90%2B+Categories" />
 
 <br/>
+
+![Python](...)
 
 ![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge\&logo=python\&logoColor=white)
 ![Streamlit](https://img.shields.io/badge/Streamlit-FF4B4B?style=for-the-badge\&logo=streamlit\&logoColor=white)
