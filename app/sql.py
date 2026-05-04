@@ -14,7 +14,10 @@ client_sql = Groq()
 
 
 # ─────────────────────────────────────────────
-# 🔹 KEYWORD MAPS
+# 🔹 ADJECTIVE MAP
+# Translates natural language words → SQL hints
+# NOTE: "premium" uses a moderate threshold (10000)
+# because most products in DB are under 50000
 # ─────────────────────────────────────────────
 
 ADJECTIVE_MAP = {
@@ -32,9 +35,9 @@ ADJECTIVE_MAP = {
     "affordable":         "price < 5000 ORDER BY price ASC",
     "budget":             "price < 5000 ORDER BY price ASC",
     "budget friendly":    "price < 5000 ORDER BY price ASC",
-    "premium":            "price > 50000 ORDER BY price DESC",
-    "expensive":          "price > 50000 ORDER BY price DESC",
-    "high end":           "price > 50000 ORDER BY price DESC",
+    "premium":            "ORDER BY price DESC",   # top priced in that category
+    "expensive":          "ORDER BY price DESC",
+    "high end":           "ORDER BY price DESC",
 
     # Discount based
     "discounted":         "discount > 0.2 ORDER BY discount DESC",
@@ -44,6 +47,11 @@ ADJECTIVE_MAP = {
     "heavily discounted": "discount > 0.4 ORDER BY discount DESC",
     "offers":             "discount > 0.1 ORDER BY discount DESC",
 }
+
+# ─────────────────────────────────────────────
+# 🔹 CATEGORY MAP
+# Maps user words → actual DB category names
+# ─────────────────────────────────────────────
 
 CATEGORY_MAP = {
     "tv":           "smart tv",
@@ -121,16 +129,27 @@ Rules:
 - Default LIMIT 5 unless user asks for more
 - Search title using: LOWER(title) LIKE '%keyword%'
 - Search category using: LOWER(category) LIKE '%keyword%'
-- For brand names (nova, samsung, boat, realme etc.) search BOTH title AND brand columns
-- For color + product (e.g. "pink hair dryer") search color AND product separately in title:
-    WHERE LOWER(title) LIKE '%pink%' AND LOWER(title) LIKE '%hair%'
-- For brand + product (e.g. "NOVA hair dryer") search brand name in title AND brand column:
-    WHERE (LOWER(title) LIKE '%nova%' OR LOWER(brand) LIKE '%nova%') AND LOWER(title) LIKE '%hair%'
+
+- For brand names (samsung, boat, realme, havells, rk etc.):
+    Search BOTH title AND brand:
+    WHERE (LOWER(title) LIKE '%samsung%' OR LOWER(brand) LIKE '%samsung%')
+
+- IMPORTANT — For short brand names like "nova", "rk", "vega":
+    Use word-boundary style: LOWER(brand) = 'nova' OR LOWER(brand) LIKE 'nova %'
+    This avoids matching "supernova", "renovation" etc.
+
+- For color + product (e.g. "pink hair dryer"):
+    WHERE LOWER(title) LIKE '%pink%' AND LOWER(category) LIKE '%hair%'
+
+- For brand + product (e.g. "NOVA hair dryer"):
+    WHERE (LOWER(brand) = 'nova' OR LOWER(brand) LIKE 'nova %' OR LOWER(title) LIKE '%nova %') AND LOWER(category) LIKE '%hair%'
+
 - price under X → price < X
 - price above X → price > X
 - top / best    → ORDER BY avg_rating DESC
 - cheapest      → ORDER BY price ASC
 - most popular  → ORDER BY total_ratings DESC
+- premium / expensive / high end → ORDER BY price DESC (do NOT add price > X filter)
 - If [HINTS: ...] provided, use them directly in the SQL
 
 Examples:
@@ -140,11 +159,17 @@ Examples:
   "laptops under 50000"
   → SELECT * FROM product WHERE LOWER(category) LIKE '%laptop%' AND price < 50000 LIMIT 5;
 
-  "pink hair dryer"
-  → SELECT * FROM product WHERE LOWER(title) LIKE '%pink%' AND LOWER(title) LIKE '%hair%' LIMIT 5;
-
   "NOVA hair dryer"
-  → SELECT * FROM product WHERE (LOWER(title) LIKE '%nova%' OR LOWER(brand) LIKE '%nova%') AND LOWER(title) LIKE '%hair%' LIMIT 5;
+  → SELECT * FROM product WHERE (LOWER(brand) = 'nova' OR LOWER(brand) LIKE 'nova %' OR LOWER(title) LIKE '%nova %') AND LOWER(category) LIKE '%hair%' LIMIT 5;
+
+  "havells hair dryer"
+  → SELECT * FROM product WHERE (LOWER(title) LIKE '%havells%' OR LOWER(brand) LIKE '%havells%') AND LOWER(category) LIKE '%hair%' LIMIT 5;
+
+  "rk india hair dryer"
+  → SELECT * FROM product WHERE (LOWER(title) LIKE '%rk india%' OR LOWER(brand) LIKE '%rk%') AND LOWER(category) LIKE '%hair%' LIMIT 5;
+
+  "premium smartwatches [HINTS: ORDER BY price DESC]"
+  → SELECT * FROM product WHERE LOWER(category) LIKE '%smartwatch%' ORDER BY price DESC LIMIT 5;
 
   "boat earphones under 2000"
   → SELECT * FROM product WHERE (LOWER(title) LIKE '%boat%' OR LOWER(brand) LIKE '%boat%') AND price < 2000 LIMIT 5;
@@ -211,9 +236,8 @@ def run_query(query: str) -> pd.DataFrame | None:
 # ─────────────────────────────────────────────
 # 🔹 FALLBACK SEARCH
 # Used when LLM query returns empty results.
-# Searches title + category + brand with all keywords.
-# Fix: len(w) > 1 so short words like "ac" aren't dropped.
-# Fix: brand column also searched so "NOVA" is found.
+# Uses AND logic — all keywords must match.
+# Searches title + brand + category columns.
 # ─────────────────────────────────────────────
 
 NOISE_WORDS = {
@@ -228,7 +252,7 @@ NOISE_WORDS = {
 def fallback_search(question: str) -> pd.DataFrame | None:
     q = re.sub(r'\b\d[\d,]*\b', '', question.lower())
     keywords = [w for w in re.findall(r'[a-z]+', q)
-                if w not in NOISE_WORDS and len(w) > 1]  # > 1 not > 2, keeps "ac"
+                if w not in NOISE_WORDS and len(w) > 1]
     print(f"[FALLBACK] keywords: {keywords}")
 
     if not keywords:
@@ -239,7 +263,7 @@ def fallback_search(question: str) -> pd.DataFrame | None:
     if price_match:
         price_clause = f"AND price < {price_match.group(1)}"
 
-    # Search title + category + brand for every keyword
+    # AND between keywords — all must match across title/brand/category
     conditions = " AND ".join(
         f"(LOWER(title) LIKE '%{kw}%' OR LOWER(brand) LIKE '%{kw}%' OR LOWER(category) LIKE '%{kw}%')"
         for kw in keywords
@@ -303,8 +327,10 @@ def sql_chain(question: str) -> str:
             return "Sorry, I couldn't find any matching products. Try rephrasing your search."
 
     # Step 6: Limit results
-    limit_match = re.search(r'\b([1-9][0-9]?)\s*(?:products?|items?|laptops?|phones?|results?|watches?|shoes?)?\b',
-                            question.lower())
+    limit_match = re.search(
+        r'\b([1-9][0-9]?)\s*(?:products?|items?|laptops?|phones?|results?|watches?|shoes?)?\b',
+        question.lower()
+    )
     limit = int(limit_match.group(1)) if limit_match else 5
     df = df.head(limit)
 
@@ -324,13 +350,14 @@ if __name__ == "__main__":
         "show me budget friendly headphones",
         "top rated samsung phones",
         "popular smartwatches",
-        "premium laptops",
+        "premium smartwatches",
         "heavily discounted TVs",
         "affordable shoes under 1000",
-        "best deals on earbuds",
-        "pink hair dryer",           # color + product fix
-        "NOVA hair dryer",           # brand + product fix
-        "boat earphones under 2000", # brand + price fix
+        "NOVA hair dryer",
+        "havells hair dryer",
+        "rk india hair dryer",
+        "boat earphones under 2000",
+        "show me 10 laptops",
     ]
     for q in tests:
         print(f"\n{'='*50}")
