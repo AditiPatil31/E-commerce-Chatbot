@@ -13,11 +13,10 @@ import streamlit as st
 # ─────────────────────────────────────────────
 
 # Try Streamlit secrets first (Streamlit Cloud)
-# GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", None)
-# GROQ_MODEL = st.secrets.get("GROQ_MODEL", None)
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", None)
+GROQ_MODEL = st.secrets.get("GROQ_MODEL", None)
 
-GROQ_API_KEY=None
-GROQ_MODEL=None
+
 
 
 # Fallback to .env for local development
