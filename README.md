@@ -2,7 +2,7 @@
 
 <div align="center">
 
-<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=600&lines=E-Commerce+AI+Chatbot;Natural+Language+to+SQL+to+Results;6795+Products+and+90+Categories" />
+<img src="https://readme-typing-svg.demolab.com?font=Fira+Code&weight=700&size=28&pause=1000&color=F97316&center=true&vCenter=true&width=600&lines=E-Commerce+AI+Chatbot;Natural+Language+to+SQL+to+Results;Intelligent+Hybrid+Routing+System" />
 
 <br/>
 
@@ -31,16 +31,48 @@
 
 ## 🧠 What Makes This Different?
 
-Most chatbots use either **RAG** or **SQL**.
-This project combines both using a **multi-layer hybrid routing system**:
+Most chatbots rely on either **RAG** (for FAQs) or **SQL** (for product retrieval).
 
-| Query Type      | Example                    | Handled By                 |
-| --------------- | -------------------------- | -------------------------- |
-| Product Search  | "budget laptops under 40k" | LLM → SQL → SQLite         |
-| FAQ             | "What is return policy?"   | RAG → ChromaDB             |
-| Brand + Product | "NOVA hair dryer"          | SQL (brand + title search) |
-| Color + Product | "pink hair dryer"          | SQL multi-match            |
-| Adjective Query | "premium smartwatch"       | SQL hints                  |
+This project combines both using an **intelligent routing layer** that understands user intent before deciding how to answer.
+
+| Query Type      | Example                    | Handled By             |
+| --------------- | -------------------------- | ---------------------- |
+| Product Search  | "budget laptops under 40k" | LLM → SQL → SQLite     |
+| FAQ             | "What is return policy?"   | RAG → ChromaDB         |
+| Mixed Query     | "how to track my product"  | FAQ (correctly routed) |
+| Unknown Product | "show me gucci bags"       | SQL fallback           |
+
+---
+
+## 🧠 Intelligent Routing System
+
+Instead of relying on a single method, the chatbot uses a **layered decision system** to reduce errors and improve accuracy.
+
+```
+User Query
+   ↓
+Semantic Understanding
+   ↓
+FAQ Safety Check
+   ↓
+Database Matching
+   ↓
+Intent Detection
+   ↓
+Final Route → FAQ or SQL
+```
+
+### How it works
+
+* The system first tries to **understand the meaning** of the query using a semantic model
+* If the query clearly looks like a support/FAQ question, it is handled by the **RAG pipeline**
+* If not, it checks whether the query matches **real products in the database**
+* If no match is found, it falls back to **intent detection** to still handle shopping queries
+
+This layered approach helps handle tricky cases like:
+
+* "how to track my product" → correctly treated as FAQ
+* "show me gucci bags" → treated as product search even if not in database
 
 ---
 
@@ -49,7 +81,7 @@ This project combines both using a **multi-layer hybrid routing system**:
 ```
 User Query
    ↓
-Hybrid Router (DB check + intent + semantic)
+Hybrid Router (semantic + DB + intent)
    ↓
 FAQ (RAG)        Product Search (SQL + LLM)
    ↓                    ↓
@@ -68,9 +100,11 @@ ChromaDB          Query Preprocessing
 
 ## ⚙️ Key Features
 
-* 🔹 **Smart routing (DB-aware + intent + semantic fallback)**
-* 🔹 RAG-based FAQ answering
+* 🔹 Intelligent hybrid routing system
+* 🔹 Handles **ambiguous and mixed queries reliably**
+* 🔹 RAG-based FAQ answering (ChromaDB)
 * 🔹 LLM-powered SQL generation
+* 🔹 Database-driven product detection (no hardcoding)
 * 🔹 Smart query preprocessing:
 
   * `50k → 50000`
@@ -129,9 +163,20 @@ top rated samsung phones under 20000
 popular smartwatches
 NOVA hair dryer
 heavily discounted TVs
-show me 10 laptops
-what is the return policy?
+
+how to track my order
+money back process
+cancel my order
 ```
+
+---
+
+## 📌 Why This Project Stands Out
+
+* Combines **semantic understanding + rule-based safety + database grounding**
+* Reduces common chatbot failures (wrong routing, mixed queries)
+* Automatically adapts to **new products added to the database**
+* Designed with **real-world edge cases in mind**
 
 ---
 
