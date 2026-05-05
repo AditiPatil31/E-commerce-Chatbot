@@ -220,7 +220,7 @@ def detect_route(query: str) -> str:
         semantic = None
         score = 0.0
 
-    print(f"[SEMANTIC] route={semantic}, score={score:.2f}")
+    
 
     # Step 2: Confident FAQ from semantic router
     # Handles "track my product", "money back process" etc.
