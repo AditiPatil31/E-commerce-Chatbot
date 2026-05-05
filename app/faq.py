@@ -17,9 +17,6 @@ GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", None)
 GROQ_MODEL = st.secrets.get("GROQ_MODEL", None)
 
 
-# ── TEMPORARY DEBUG — remove after fixing ──
-st.write("KEY:", GROQ_API_KEY)
-st.write("MODEL:", GROQ_MODEL)
 
 
 # Fallback to .env for local development
