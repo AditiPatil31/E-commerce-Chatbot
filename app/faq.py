@@ -5,23 +5,29 @@ import chromadb
 from chromadb.utils import embedding_functions
 from groq import Groq
 import re
+import streamlit as st
 
 # ─────────────────────────────────────────────
-# 🔹 HYBRID ENV HANDLING (LOCAL + STREAMLIT)
+# 🔹 LOAD API KEYS
+# Works on both local (.env) and Streamlit Cloud (secrets)
 # ─────────────────────────────────────────────
-try:
-    import streamlit as st
-    GROQ_API_KEY = st.secrets["GROQ_API_KEY"]
-    GROQ_MODEL = st.secrets["GROQ_MODEL"]
-except:
+
+# Try Streamlit secrets first (Streamlit Cloud)
+GROQ_API_KEY = st.secrets.get("GROQ_API_KEY", None)
+GROQ_MODEL = st.secrets.get("GROQ_MODEL", None)
+
+# Fallback to .env for local development
+if not GROQ_API_KEY:
     from dotenv import load_dotenv
     load_dotenv()
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     GROQ_MODEL = os.getenv("GROQ_MODEL")
 
-# ── ADD THIS — catch None keys early with clear error ──
+# Final check — fail early with clear message
 if not GROQ_API_KEY:
-    raise ValueError("GROQ_API_KEY is missing. Add it in Streamlit Cloud Secrets or .env file.")
+    raise ValueError("GROQ_API_KEY not found. Add it in Streamlit secrets or .env file.")
+if not GROQ_MODEL:
+    raise ValueError("GROQ_MODEL not found. Add it in Streamlit secrets or .env file.")
 
 # Initialize Groq client
 groq_client = Groq(api_key=GROQ_API_KEY)
@@ -83,12 +89,10 @@ ABBREVIATION_MAP = {
 def expand_query(query: str) -> str:
     words = re.findall(r'\b\w+\b', query.lower())
     expanded_words = []
-
     for word in words:
         expanded_words.append(word)
         if word in ABBREVIATION_MAP:
             expanded_words.append(ABBREVIATION_MAP[word])
-
     return " ".join(expanded_words)
 
 # ─────────────────────────────────────────────
@@ -135,7 +139,6 @@ CONTEXT:
 QUESTION:
 {query}
 """
-
     completion = groq_client.chat.completions.create(
         model=GROQ_MODEL,
         messages=[
@@ -162,14 +165,14 @@ def faq_chain(query):
     context = get_best_context(result)
 
     if context == "NO_CONTEXT":
-        return "I don’t have that information right now."
+        return "I don't have that information right now."
 
     print("Context:", context)
 
     answer = generate_answer(query, context)
 
     if "i don't know" in answer.lower():
-        return "I don’t have that information right now."
+        return "I don't have that information right now."
 
     return answer
 
