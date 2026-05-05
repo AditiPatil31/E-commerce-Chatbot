@@ -19,6 +19,10 @@ except:
     GROQ_API_KEY = os.getenv("GROQ_API_KEY")
     GROQ_MODEL = os.getenv("GROQ_MODEL")
 
+# ── ADD THIS — catch None keys early with clear error ──
+if not GROQ_API_KEY:
+    raise ValueError("GROQ_API_KEY is missing. Add it in Streamlit Cloud Secrets or .env file.")
+
 # Initialize Groq client
 groq_client = Groq(api_key=GROQ_API_KEY)
 
