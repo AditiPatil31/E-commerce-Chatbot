@@ -14,9 +14,6 @@ encoder = HuggingFaceEncoder(
 
 # ─────────────────────────────────────────────
 # 🔹 FAQ ROUTE
-# Rich utterances covering FAQ queries that
-# contain product words like "track my product",
-# "return my item", "money back process" etc.
 # ─────────────────────────────────────────────
 faq = Route(
     name='faq',
@@ -133,8 +130,6 @@ router = SemanticRouter(
 
 # ─────────────────────────────────────────────
 # 🔹 DB CHECK
-# Checks if query words match real products
-# in DB. Only runs when semantic is not confident.
 # ─────────────────────────────────────────────
 def is_product_query(query: str) -> bool:
     words = [w for w in query.lower().split() if len(w) > 2]
@@ -158,8 +153,6 @@ def is_product_query(query: str) -> bool:
 
 # ─────────────────────────────────────────────
 # 🔹 INTENT CHECK
-# Product not in DB but looks like a search.
-# e.g. "show me gucci bags" → SQL
 # ─────────────────────────────────────────────
 PRODUCT_INTENT_WORDS = {
     "show", "find", "search", "buy", "get", "give", "list",
@@ -175,11 +168,8 @@ def is_product_intent(query: str) -> bool:
 
 # ─────────────────────────────────────────────
 # 🔹 FAQ BACKUP CHECK
-# Safety net for when semantic router fails
-# or has low confidence. Catches clear FAQ
-# queries using substring matching — not
-# exact word matching so "money back process"
-# and "track my product" are both caught.
+# Safety net when semantic router fails.
+# Uses substring matching for flexibility.
 # ─────────────────────────────────────────────
 FAQ_BACKUP = [
     "track", "tracking", "refund", "return", "returning",
@@ -196,55 +186,79 @@ def is_faq_backup(query: str) -> bool:
 
 
 # ─────────────────────────────────────────────
+# 🔹 SAFE SEMANTIC CALL
+# Returns (route_name, score) safely.
+# Handles all possible return types from
+# different versions of semantic-router.
+# ─────────────────────────────────────────────
+def get_semantic_result(query: str):
+    try:
+        route = router(query)
+        if route is None:
+            return None, 0.0
+
+        name = route.name if hasattr(route, 'name') else None
+
+        # Safely extract score — different versions return different types
+        raw_score = None
+        if hasattr(route, 'similarity_score'):
+            raw_score = route.similarity_score
+        elif hasattr(route, 'score'):
+            raw_score = route.score
+
+        # Convert to float safely
+        if raw_score is None:
+            score = 0.0
+        elif isinstance(raw_score, (list, tuple)):
+            score = float(raw_score[0]) if raw_score else 0.0
+        else:
+            score = float(raw_score)
+
+        return name, score
+
+    except Exception as e:
+        print(f"[SEMANTIC ERROR] {e}")
+        return None, 0.0
+
+
+# ─────────────────────────────────────────────
 # 🔹 FINAL ROUTE DETECTION
 #
 # Flow:
-#   1. Semantic router (primary FAQ detector)
-#   2. Confident FAQ → FAQ
-#   3. FAQ backup → FAQ (when semantic fails)
-#   4. DB check → SQL
-#   5. Semantic low confidence FAQ → FAQ
-#   6. Intent check → SQL
-#   7. Default → FAQ
+#   1. Semantic router → confident FAQ → FAQ
+#   2. FAQ backup → FAQ (safety net)
+#   3. DB check → SQL
+#   4. Semantic low confidence FAQ → FAQ
+#   5. Intent check → SQL
+#   6. Default → FAQ
 # ─────────────────────────────────────────────
 def detect_route(query: str) -> str:
     query_lower = query.lower().strip()
 
-    # Step 1: Semantic router — primary detector
-    try:
-        route = router(query_lower)
-        semantic = route.name if route else None
-        score = route.similarity_score if route else 0.0
-    except Exception as e:
-        print(f"[SEMANTIC ERROR] {e}")
-        semantic = None
-        score = 0.0
+    # Step 1: Semantic router
+    semantic, score = get_semantic_result(query_lower)
 
-    
-
-    # Step 2: Confident FAQ from semantic router
-    # Handles "track my product", "money back process" etc.
+    # Step 2: Confident FAQ from semantic
     if semantic == "faq" and score >= 0.4:
         return "faq"
 
-    # Step 3: FAQ backup — runs when semantic fails or low confidence
-    # Catches clear FAQ queries that slipped through
+    # Step 3: FAQ backup — when semantic fails or low confidence
     if is_faq_backup(query_lower):
         return "faq"
 
-    # Step 4: DB check — reliable product detection
+    # Step 4: DB check
     if is_product_query(query_lower):
         return "sql"
 
-    # Step 5: Semantic said FAQ but low confidence → still FAQ
+    # Step 5: Semantic said FAQ but low confidence
     if semantic == "faq":
         return "faq"
 
-    # Step 6: Intent check — product not in DB
+    # Step 6: Intent check
     if is_product_intent(query_lower):
         return "sql"
 
-    # Step 7: Safe default
+    # Step 7: Default
     return "faq"
 
 
