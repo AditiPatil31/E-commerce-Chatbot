@@ -147,7 +147,9 @@ Rules:
     WHERE (LOWER(title) LIKE '%samsung%' OR LOWER(brand) LIKE '%samsung%')
 
 - IMPORTANT — For short brand names like "nova", "rk", "vega":
-    Use word-boundary style: LOWER(brand) = 'nova' OR LOWER(brand) LIKE 'nova %'
+    Always convert brand to lowercase before comparing.
+    Use: LOWER(brand) = 'nova' OR LOWER(brand) LIKE 'nova %'
+    This handles NOVA, Nova, nova all the same way.
     This avoids matching "supernova", "renovation" etc.
 
 - For color + product (e.g. "pink hair dryer"):
