@@ -22,16 +22,20 @@ client_sql = Groq()
 
 ADJECTIVE_MAP = {
     # Rating based
-    "top rated":          "avg_rating >= 4.5 ORDER BY avg_rating DESC",
-    "best rated":         "avg_rating >= 4.5 ORDER BY avg_rating DESC",
+    # Using >= 4.0 minimum so enough products qualify
+    "top rated":          "avg_rating >= 4.0 ORDER BY avg_rating DESC",
+    "best rated":         "avg_rating >= 4.0 ORDER BY avg_rating DESC",
     "highly rated":       "avg_rating >= 4.0 ORDER BY avg_rating DESC",
-    "popular":            "total_ratings >= 1000 ORDER BY total_ratings DESC",
     "well reviewed":      "avg_rating >= 4.0 ORDER BY avg_rating DESC",
-    "good":               "avg_rating >= 4.0",
-    "best selling":       "total_ratings >= 500 ORDER BY total_ratings DESC",
-    "bestseller":         "total_ratings >= 500 ORDER BY total_ratings DESC",
-    "trending":           "total_ratings >= 500 ORDER BY total_ratings DESC",
-    "most popular":       "total_ratings >= 1000 ORDER BY total_ratings DESC",
+    "good":               "avg_rating >= 3.5",
+
+    # Popularity based
+    # Removed fixed thresholds — just sort by most rated
+    "popular":            "ORDER BY total_ratings DESC",
+    "most popular":       "ORDER BY total_ratings DESC",
+    "best selling":       "ORDER BY total_ratings DESC",
+    "bestseller":         "ORDER BY total_ratings DESC",
+    "trending":           "ORDER BY total_ratings DESC",
 
     # Price based
     "cheap":              "ORDER BY price ASC",
@@ -46,16 +50,16 @@ ADJECTIVE_MAP = {
     "luxury":             "ORDER BY price DESC",
 
     # Discount based
-    "discounted":         "discount > 0.2 ORDER BY discount DESC",
+    # Lowered thresholds so more products qualify
+    "discounted":         "discount > 0.1 ORDER BY discount DESC",
     "on sale":            "discount > 0.1 ORDER BY discount DESC",
-    "best deal":          "discount > 0.2 ORDER BY discount DESC",
-    "best deals":         "discount > 0.2 ORDER BY discount DESC",
-    "heavily discounted": "discount > 0.4 ORDER BY discount DESC",
+    "best deal":          "discount > 0.1 ORDER BY discount DESC",
+    "best deals":         "discount > 0.1 ORDER BY discount DESC",
+    "heavily discounted": "discount > 0.3 ORDER BY discount DESC",
     "offers":             "discount > 0.1 ORDER BY discount DESC",
     "sale":               "discount > 0.1 ORDER BY discount DESC",
-    "clearance":          "discount > 0.3 ORDER BY discount DESC",
+    "clearance":          "discount > 0.2 ORDER BY discount DESC",
 }
-
 # ─────────────────────────────────────────────
 # 🔹 CATEGORY MAP
 # Maps user words → actual DB category names
