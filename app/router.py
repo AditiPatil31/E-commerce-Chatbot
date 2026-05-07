@@ -1,6 +1,6 @@
 import sqlite3
 from pathlib import Path
-from semantic_router import Route, RouteLayer as SemanticRouter
+from semantic_router import Route, SemanticRouter
 from semantic_router.encoders import HuggingFaceEncoder
 
 db_path = Path(__file__).parent / "db.sqlite"

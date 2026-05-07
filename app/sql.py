@@ -28,16 +28,22 @@ ADJECTIVE_MAP = {
     "popular":            "total_ratings >= 1000 ORDER BY total_ratings DESC",
     "well reviewed":      "avg_rating >= 4.0 ORDER BY avg_rating DESC",
     "good":               "avg_rating >= 4.0",
+    "best selling":       "total_ratings >= 500 ORDER BY total_ratings DESC",
+    "bestseller":         "total_ratings >= 500 ORDER BY total_ratings DESC",
+    "trending":           "total_ratings >= 500 ORDER BY total_ratings DESC",
+    "most popular":       "total_ratings >= 1000 ORDER BY total_ratings DESC",
 
     # Price based
     "cheap":              "ORDER BY price ASC",
     "cheapest":           "ORDER BY price ASC",
-    "affordable":         "price < 5000 ORDER BY price ASC",
-    "budget":             "price < 5000 ORDER BY price ASC",
-    "budget friendly":    "price < 5000 ORDER BY price ASC",
-    "premium":            "ORDER BY price DESC",   # top priced in that category
+    "affordable":         "ORDER BY price ASC",
+    "budget":             "ORDER BY price ASC",
+    "budget friendly":    "ORDER BY price ASC",
+    "lowest price":       "ORDER BY price ASC",
+    "premium":            "ORDER BY price DESC",
     "expensive":          "ORDER BY price DESC",
     "high end":           "ORDER BY price DESC",
+    "luxury":             "ORDER BY price DESC",
 
     # Discount based
     "discounted":         "discount > 0.2 ORDER BY discount DESC",
@@ -46,6 +52,8 @@ ADJECTIVE_MAP = {
     "best deals":         "discount > 0.2 ORDER BY discount DESC",
     "heavily discounted": "discount > 0.4 ORDER BY discount DESC",
     "offers":             "discount > 0.1 ORDER BY discount DESC",
+    "sale":               "discount > 0.1 ORDER BY discount DESC",
+    "clearance":          "discount > 0.3 ORDER BY discount DESC",
 }
 
 # ─────────────────────────────────────────────
